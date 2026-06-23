@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VPS Monitor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/css/xterm.min.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="screen">
+  <form id="login-form" class="login-card">
+    <h1>VPS Monitor</h1>
+    <p class="subtitle">Sign in to manage your servers</p>
+    <input type="text" id="login-username" placeholder="Username" autocomplete="username" required />
+    <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required />
+    <button type="submit">Sign in</button>
+    <div id="login-error" class="error-text"></div>
+  </form>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-screen" class="screen hidden">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2>Servers</h2>
+      <button id="add-server-btn" title="Add server">+</button>
+    </div>
+    <div id="server-list"></div>
+    <div class="sidebar-footer">
+      <span id="current-user"></span>
+      <button id="logout-btn">Logout</button>
+    </div>
+  </aside>
+
+  <main id="main-content">
+    <div id="empty-state" class="empty-state">
+      <p>Select a server from the left, or add a new one.</p>
+    </div>
+
+    <div id="server-view" class="hidden">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="terminal">Terminal</button>
+        <button class="tab-btn" data-tab="files">File Manager</button>
+        <span id="server-view-title"></span>
+        <div class="tab-actions">
+          <button id="edit-server-btn">Edit</button>
+          <button id="delete-server-btn" class="danger">Delete</button>
+        </div>
+      </div>
+
+      <div id="tab-terminal" class="tab-content">
+        <div id="terminal-container"></div>
+      </div>
+
+      <div id="tab-files" class="tab-content hidden">
+        <div class="file-toolbar">
+          <button id="file-up-btn">Up</button>
+          <span id="file-path"></span>
+          <button id="file-refresh-btn">Refresh</button>
+          <button id="file-new-folder-btn">New folder</button>
+        </div>
+        <table id="file-table">
+          <thead><tr><th>Name</th><th>Size</th><th>Modified</th><th></th></tr></thead>
+          <tbody id="file-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD/EDIT SERVER MODAL -->
+<div id="server-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3 id="server-modal-title">Add Server</h3>
+    <form id="server-form">
+      <input type="hidden" id="server-id" />
+      <label>Name<input type="text" id="server-name" required /></label>
+      <label>Host / IP<input type="text" id="server-host" required /></label>
+      <label>Port<input type="number" id="server-port" value="22" required /></label>
+      <label>Username<input type="text" id="server-username" required /></label>
+      <label>Auth type
+        <select id="server-auth-type">
+          <option value="password">Password</option>
+          <option value="key">Private Key</option>
+        </select>
+      </label>
+      <label id="password-field">Password<input type="password" id="server-password" autocomplete="new-password" /></label>
+      <label id="key-field" class="hidden">Private Key<textarea id="server-private-key" rows="5" placeholder="-----BEGIN OPENSSH PRIVATE KEY-----"></textarea></label>
+      <label id="passphrase-field" class="hidden">Passphrase (optional)<input type="password" id="server-passphrase" /></label>
+      <div class="modal-actions">
+        <button type="button" id="server-cancel-btn">Cancel</button>
+        <button type="submit">Save</button>
+      </div>
+      <div id="server-form-error" class="error-text"></div>
+    </form>
+  </div>
+</div>
+
+<!-- FILE EDITOR MODAL -->
+<div id="editor-modal" class="modal hidden">
+  <div class="modal-card editor-card">
+    <h3 id="editor-title">Edit file</h3>
+    <textarea id="editor-textarea" spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button type="button" id="editor-cancel-btn">Cancel</button>
+      <button type="button" id="editor-save-btn">Save</button>
+    </div>
+    <div id="editor-error" class="error-text"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/lib/xterm.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xterm-addon-fit/0.8.0/addon-fit.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
